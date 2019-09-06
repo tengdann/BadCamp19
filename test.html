@@ -25,7 +25,15 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
         function DetectLabels(imageData) {
             AWS.region = 'RegionToUse';
             var rekognition = new AWS.Rekognition();
-            var params = {};
+            var params = {
+                Image: {
+                    Bytes: imageData
+                },
+                MaxLabels: 5,
+                MinConfidence: 95,
+            };
+
+            
         }
 
         // Loads selected image and unencodes image bytes for Rekognition DetectLabels API
