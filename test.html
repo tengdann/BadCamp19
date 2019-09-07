@@ -33,7 +33,17 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
                 MinConfidence: 95,
             };
 
-            
+            rekognition.detectLabels(params, function(err, data) {
+                if (err) console.log(err, err.stack); //oopsie doopsie something went wrong
+                else {
+                    var alt_text = 'Image may contain:'
+                    for (var i = 0; i < data.Labels.length; i++) {
+                        alt_text += ' ' + data.Labels[i].Name;
+                    }
+                    // Need to pass in image id/identifier and modify alt tag
+                    //document.getElementById('image_id').alt = alt_text
+                }
+            });
         }
 
         // Loads selected image and unencodes image bytes for Rekognition DetectLabels API
