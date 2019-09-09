@@ -10,17 +10,25 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
         <script src = "amazon-cognito-identity.min.js"></script>
         <script src = "https://sdk.amazonaws.com/js/aws-sdk-2.16.0.min.js"></script>
         <script src = "./app.js"></script>
+        <script src = "https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
         <meta charset = "UTF-8">
-        <title>Rekognition Test</title>
     </head>
 
-    <body>
-        <h1>Image Descriptor</h1>
-        <input type = "file" name = "fileUpload" id = "fileUpload" accept = "image/*">
-        <p id = "results"></p>
-    </body>
-
     <script>
+        // TODO: FIX
+        // Use jQuery to select ID w/ wildcard
+        /*
+        document.getElementById('edit-field-media-image-0-upload').addEventListener('change', function (event) {
+            ProcessImage();
+        }, false);
+        */
+
+        $(document).ready(function() {
+            $('input[id^="edit-filed-media-image-0-upload"]').change(function() {
+                ProcessImage();
+            });
+        });
+
         // Calls DetectLabels API and provides formatted descriptor of image
         function DetectLabels(imageData) {
             AWS.region = 'RegionToUse';
@@ -40,8 +48,9 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
                     for (var i = 0; i < data.Labels.length; i++) {
                         alt_text += ' ' + data.Labels[i].Name;
                     }
-                    // Need to pass in image id/identifier and modify alt tag
-                    //document.getElementById('image_id').alt = alt_text
+                    // TODO: FIX
+                    // Need to use jQuery to find alt-tag w/ wildcard
+                    //document.getElementById('edit-field-media-image-0-alt*').value = alt_text
                 }
             });
         }
@@ -49,7 +58,8 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
         // Loads selected image and unencodes image bytes for Rekognition DetectLabels API
         function ProcessImage() {
             AnonLog();
-            var control = document.getElementById("fileUpload");
+            // Find the actual file using JS/jQuery
+            var control = $('input[id^="edit-field-media-image-0-upload"]');
             var file = control.files[0];
 
             // Load base64 encoded image
