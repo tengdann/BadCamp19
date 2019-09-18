@@ -24,7 +24,7 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
         */
 
         $(document).ready(function() {
-            $('input[id^="edit-filed-media-image-0-upload"]').change(function() {
+            $('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
                 ProcessImage();
             });
         });
@@ -59,7 +59,7 @@ https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html#im
         function ProcessImage() {
             AnonLog();
             // Find the actual file using JS/jQuery
-            var control = $('input[id^="edit-field-media-image-0-upload"]');
+            var control = $('input[id*="edit-field-upload-und-0-upload-button"]');
             var file = control.files[0];
 
             // Load base64 encoded image

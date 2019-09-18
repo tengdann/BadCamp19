@@ -1,0 +1,5 @@
+name = BadCamp19
+description = Test Module of BadCamp19 Presentation
+core = 7.x
+scripts[] = badcamp19.js
+dependencies[] = drupal:image
