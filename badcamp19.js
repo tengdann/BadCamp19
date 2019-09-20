@@ -33,7 +33,9 @@ function DetectLabels(imageData) {
             }
             // TODO: FIX
             // Need to use jQuery to find alt-tag w/ wildcard
-            //document.getElementById('edit-field-media-image-0-alt*').value = alt_text
+            $(document).ready(function() {
+                $('input[id*="edit-field-alt-text"]').val(alt_text)
+            });
         }
     });
 }
