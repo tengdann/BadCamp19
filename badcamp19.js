@@ -6,15 +6,19 @@
     }, false);
     */
 
-    $(document).ready(function() {
-    $('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
-        ProcessImage();
-    });
+// $(function() {
+//     $('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
+//         ProcessImage();
+//     });
+// });
+
+$('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
+    ProcessImage();
 });
 
 // Calls DetectLabels API and provides formatted descriptor of image
 function DetectLabels(imageData) {
-    AWS.region = 'RegionToUse';
+    AWS.region = 'us-east-1';
     var rekognition = new AWS.Rekognition();
     var params = {
         Image: {
@@ -33,7 +37,7 @@ function DetectLabels(imageData) {
             }
             // TODO: FIX
             // Need to use jQuery to find alt-tag w/ wildcard
-            $(document).ready(function() {
+            $(function() {
                 $('input[id*="edit-field-alt-text"]').val(alt_text)
             });
         }
@@ -85,9 +89,9 @@ function ProcessImage() {
 // Provides anonymous log on to AWS services
 function AnonLog() {
     // Configure the credentials provider to use your identity pool
-    AWS.config.region = 'RegionToUse';
+    AWS.config.region = 'us-east-1';
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'IdentityPoolIdToUse',
+        IdentityPoolId: 'us-east-1:d5e199e8-1891-4a1a-b39a-4cf66f8f852c',
     });
 
     // Make the call to obtain credentials
