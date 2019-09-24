@@ -12,8 +12,11 @@
 //     });
 // });
 
-jQuery('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
-    ProcessImage();
+jQuery(function() {
+    jQuery('input[id*="edit-field-upload"]').click(function() {
+        ProcessImage();
+        console.log("Found a button change");
+    });
 });
 
 // Calls DetectLabels API and provides formatted descriptor of image
