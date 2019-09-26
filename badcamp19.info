@@ -3,5 +3,4 @@ description = Test Module of BadCamp19 Presentation
 package = Custom
 core = 7.x
 version = 7.x-0.1
-scripts[] = badcamp19.js, aws-sdk.min.js
 dependencies[] = drupal:image

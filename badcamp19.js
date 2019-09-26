@@ -13,7 +13,7 @@
 // });
 
 jQuery(function() {
-    jQuery('input[id*="edit-field-upload"]').click(function() {
+    $('input[id*="edit-field-upload"]').click(function() {
         ProcessImage();
         console.log("Found a button change");
     });
@@ -40,8 +40,8 @@ function DetectLabels(imageData) {
             }
             // TODO: FIX
             // Need to use jQuery to find alt-tag w/ wildcard
-            jQuery(function() {
-                jQuery('input[id*="edit-field-alt-text"]').val(alt_text)
+            $(function() {
+                $('input[id*="edit-field-alt-text"]').val(alt_text)
             });
         }
     });
@@ -51,7 +51,7 @@ function DetectLabels(imageData) {
 function ProcessImage() {
     AnonLog();
     // Find the actual file using JS/jQuery
-    var control = jQuery('input[id*="edit-field-upload-und-0-upload-button"]');
+    var control = $('input[id*="edit-field-upload-und-0-upload-button"]');
     var file = control.files[0];
 
     // Load base64 encoded image
