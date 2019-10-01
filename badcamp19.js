@@ -12,12 +12,27 @@
 //     });
 // });
 
-jQuery(function() {
-    $('input[id*="edit-field-upload"]').click(function() {
-        ProcessImage();
-        console.log("Found a button change");
+(function ($) {
+    $(function () {
+        jQueryObject = $(".form-submit");
+        jQueryObject.ajaxSuccess(function(event, XMLHttpRequest, ajaxOptions) {
+//          console.log(ajaxOptions);
+//          console.log(XMLHttpRequest);
+            ProcessImage();
+//          r =  $('.image-preview img').attr("src");
+//          console.log(r)
+        });
     });
-});
+})(jQuery);
+
+
+//jQuery(document).ready(function() {
+//    jQuery("button").click(function() {
+//        alert('Upload clicked');
+//        ProcessImage();
+//        console.log("Found an uploaded file");
+//    });
+//});
 
 // Calls DetectLabels API and provides formatted descriptor of image
 function DetectLabels(imageData) {
@@ -28,7 +43,7 @@ function DetectLabels(imageData) {
             Bytes: imageData
         },
         MaxLabels: 5,
-        MinConfidence: 95,
+//        MinConfidence: 95,
     };
 
     rekognition.detectLabels(params, function(err, data) {
@@ -40,8 +55,8 @@ function DetectLabels(imageData) {
             }
             // TODO: FIX
             // Need to use jQuery to find alt-tag w/ wildcard
-            $(function() {
-                $('input[id*="edit-field-alt-text"]').val(alt_text)
+            jQuery(document).ready(function() {
+                jQuery('input[id*="edit-field-alt-text"]').val(alt_text)
             });
         }
     });
@@ -51,42 +66,55 @@ function DetectLabels(imageData) {
 function ProcessImage() {
     AnonLog();
     // Find the actual file using JS/jQuery
-    var control = $('input[id*="edit-field-upload-und-0-upload-button"]');
-    var file = control.files[0];
+    // var control = jQuery('input[id*="edit-field-upload-und-0"]');
+    // var file = control.files[0];
+    var file_url =  jQuery('.image-preview img').attr("src");
+    function toDataURL(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    toAWS(reader.result);
+                }
+                reader.readAsDataURL(xhr.response)
+            }
+        };
+        xhr.open('GET', url)
+        xhr.responseType = 'blob'
+        xhr.send();
+    };
 
-    // Load base64 encoded image
-    var reader = new FileReader();
-    reader.onload = (function (theFile) {
-        return function (e) {
-            var img = document.createElement('img');
-            var image = null;
-            img.src = e.target.result;
-            var jpg = true;
+    function toAWS(dataURL) {
+        var image = null;
+        var jpg = true;
+        try {
+            image = atob(dataURL.split(",")[1]);
+        }
+        catch (e) {
+            jpg = false;
+        }
+        if (jpg == false) {
             try {
-                image = atob(e.target.result.split("data:image/jpeg;base64,")[1]);
+                image = atob(dataURL.split(",")[1]);
             }
             catch (e) {
-                jpg = false;
+                alert("Not an image file Rekognition can process");
             }
-            if (jpg == false) {
-                try {
-                    image = atob(e.target.result.split("data:image/png;base64,")[1]);
-                }
-                catch (e) {
-                    alert("Not an image file Rekognition can process");
-                }
-            }
-            var length = image.length;
-            imageBytes = new ArrayBuffer(length);
-            var ua = new Uint8Array(imageBytes);
-            for (var i = 0; i < length; i++) {
-                ua[i] = image.charCodeAt(i);
-            }
-            // Call Rekognition
-            DetectLabels(imageBytes)
-        };
-    })(file);
-    reader.readasDataURL(file);
+        }
+
+        var length = image.length;
+        imageBytes = new ArrayBuffer(length);
+        var ua = new Uint8Array(imageBytes);
+        for (var i = 0; i < length; i++) {
+            ua[i] = image.charCodeAt(i);
+        }
+
+        // Call Rekognition
+        DetectLabels(imageBytes);
+    };
+    toDataURL(file_url);
+    //toAWS(toDataURL(file_url));
 }
 
 // Provides anonymous log on to AWS services
@@ -94,7 +122,7 @@ function AnonLog() {
     // Configure the credentials provider to use your identity pool
     AWS.config.region = 'us-east-1';
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'us-east-1:d5e199e8-1891-4a1a-b39a-4cf66f8f852c',
+        IdentityPoolId: 'us-east-1:dfc6890f-a4cf-4c68-9d23-d415dbdb2673',
     });
 
     // Make the call to obtain credentials

@@ -8,14 +8,8 @@ function badcamp19_help($path, $arg) {
     }
 }
 
-drupal_add_js('https://sdk.amazonaws.com/js/aws-sdk-2.536.0.min.js', array(
-    'type' => 'external',
-    'requires_jquery' => 'TRUE',
-    'scope' => 'header',
-));
-drupal_add_js('./badcamp19.js', array(
-    'type' => 'file',
-    'requires_jquery' => 'TRUE',
-    'scope' => 'footer',
+drupal_add_js('https://sdk.amazonaws.com/js/aws-sdk-2.536.0.min.js', 'external');
 
-));
+$module_path = drupal_get_path('module', 'badcamp19') . '/badcamp19.js';
+
+drupal_add_js($module_path);
