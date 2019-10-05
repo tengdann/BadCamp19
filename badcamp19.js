@@ -1,38 +1,12 @@
-// TODO: FIX
-    // Use jQuery to select ID w/ wildcard
-    /*
-    document.getElementById('edit-field-media-image-0-upload').addEventListener('change', function (event) {
-        ProcessImage();
-    }, false);
-    */
-
-// $(function() {
-//     $('input[id*="edit-field-upload-und-0-upload-button"]').change(function() {
-//         ProcessImage();
-//     });
-// });
-
+// jQuery to find form submit, and runs image processing pipeline.
 (function ($) {
     $(function () {
         jQueryObject = $(".form-submit");
         jQueryObject.ajaxSuccess(function(event, XMLHttpRequest, ajaxOptions) {
-//          console.log(ajaxOptions);
-//          console.log(XMLHttpRequest);
             ProcessImage();
-//          r =  $('.image-preview img').attr("src");
-//          console.log(r)
         });
     });
 })(jQuery);
-
-
-//jQuery(document).ready(function() {
-//    jQuery("button").click(function() {
-//        alert('Upload clicked');
-//        ProcessImage();
-//        console.log("Found an uploaded file");
-//    });
-//});
 
 // Calls DetectLabels API and provides formatted descriptor of image
 function DetectLabels(imageData) {
@@ -47,14 +21,16 @@ function DetectLabels(imageData) {
     };
 
     rekognition.detectLabels(params, function(err, data) {
-        if (err) console.log(err, err.stack); //oopsie doopsie something went wrong
+        if (err) console.log(err, err.stack); // Something happened that went wrong, please check console for details.
         else {
             var alt_text = 'Image may contain:'
-            for (var i = 0; i < data.Labels.length; i++) {
-                alt_text += ' ' + data.Labels[i].Name;
+            alt_text += ' ' + data.Labels[0].Name;
+            for (var i = 1; i < data.Labels.length; i++) {
+                alt_text += ', ' + data.Labels[i].Name;
             }
-            // TODO: FIX
-            // Need to use jQuery to find alt-tag w/ wildcard
+            
+            // Adds the alt text to appropriate field (for the custom module)
+            // Format: "Image may contain: <tag>, <tag>, <tag>, ..., <tag>"
             jQuery(document).ready(function() {
                 jQuery('input[id*="edit-field-alt-text"]').val(alt_text)
             });
@@ -64,11 +40,14 @@ function DetectLabels(imageData) {
 
 // Loads selected image and unencodes image bytes for Rekognition DetectLabels API
 function ProcessImage() {
+    // Anonymous log-in into AWS services
     AnonLog();
-    // Find the actual file using JS/jQuery
-    // var control = jQuery('input[id*="edit-field-upload-und-0"]');
-    // var file = control.files[0];
+
+    // Find the file_url from however Drupal stores it
     var file_url =  jQuery('.image-preview img').attr("src");
+
+    // Extract data from file_url
+    // Function adapted from https://stackoverflow.com/a/20285053
     function toDataURL(url) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -85,24 +64,27 @@ function ProcessImage() {
         xhr.send();
     };
 
+    // Converts extracted image data to base64 representation (for AWS usage)
+    // Adapted from https://docs.aws.amazon.com/rekognition/latest/dg/image-bytes-javascript.html
     function toAWS(dataURL) {
         var image = null;
         var jpg = true;
         try {
-            image = atob(dataURL.split(",")[1]);
+            image = atob(dataURL.split(",")[1]); // Image is a JPEG
         }
         catch (e) {
-            jpg = false;
+            jpg = false; // Image is not a JPEG
         }
         if (jpg == false) {
             try {
-                image = atob(dataURL.split(",")[1]);
+                image = atob(dataURL.split(",")[1]); // Image is a PNG
             }
             catch (e) {
-                alert("Not an image file Rekognition can process");
+                alert("Not an image file Rekognition can process"); // File format not supported by Rekognition
             }
         }
 
+        // Puts image into specified Rekognition input format
         var length = image.length;
         imageBytes = new ArrayBuffer(length);
         var ua = new Uint8Array(imageBytes);
@@ -113,8 +95,9 @@ function ProcessImage() {
         // Call Rekognition
         DetectLabels(imageBytes);
     };
+
+    // Overall function call
     toDataURL(file_url);
-    //toAWS(toDataURL(file_url));
 }
 
 // Provides anonymous log on to AWS services
