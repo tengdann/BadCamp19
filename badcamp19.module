@@ -3,13 +3,51 @@
 function badcamp19_help($path, $arg) {
     switch ($path) {
         case "admin/help#badcamp19":
-            return t("Placeholder"); 
-            break; 
+            return t("Placeholder");
+            break;
     }
 }
+function badcamp19_init() {
+    drupal_add_js('https://sdk.amazonaws.com/js/aws-sdk-2.536.0.min.js', 'external');
+    drupal_add_js(array(
+        'badcamp19' => array(
+            'region' => variable_get('aws_region'),
+            'id' => variable_get('ident_pool_id')
+        )
+    ), 'setting');
+    $module_path = drupal_get_path('module', 'badcamp19') . '/badcamp19.js';
+    drupal_add_js($module_path);
+}
 
-drupal_add_js('https://sdk.amazonaws.com/js/aws-sdk-2.536.0.min.js', 'external');
+function badcamp19_menu() {
+    $items = array();
 
-$module_path = drupal_get_path('module', 'badcamp19') . '/badcamp19.js';
+    $items['admin/config/media/badcamp19'] = array(
+        'title' => 'BadCamp19',
+        'description' => 'Config for badcamp19 module',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('badcamp19_form'),
+        'access arguments' => array('access administration pages'),
+        'type' => MENU_NORMAL_ITEM,
+    );
 
-drupal_add_js($module_path);
+    return $items;
+}
+
+function badcamp19_form($form, $form_state) {
+    $form['aws_region'] = array(
+        '#type' => 'textfield',
+        '#title' => t('AWS Console Region'),
+        '#description' => t('Access your AWS console to set up Identity Pool Region.'),
+        '#required' => TRUE,
+    );
+
+    $form['ident_pool_id'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Identity Pool ID'),
+        '#description' => t('Access your AWS console to set up Identity Pool ID.'),
+        '#required' => TRUE,
+    );
+
+    return system_settings_form($form);
+}

@@ -23,7 +23,7 @@ function DetectLabels(imageData) {
     rekognition.detectLabels(params, function(err, data) {
         if (err) console.log(err, err.stack); // Something happened that went wrong, please check console for details.
         else {
-            var alt_text = 'Image may contain:'
+            var alt_text = 'Image may contain:';
             alt_text += ' ' + data.Labels[0].Name;
             for (var i = 1; i < data.Labels.length; i++) {
                 alt_text += ', ' + data.Labels[i].Name;
@@ -102,10 +102,22 @@ function ProcessImage() {
 
 // Provides anonymous log on to AWS services
 function AnonLog() {
+
+    // Access Drupal variables set in config4
+    // Adapted from https://stackoverflow.com/questions/14234598/drupal-7-global-javascript-variables
+    (function ($) {
+        Drupal.behaviors.badcamp19 = {
+            attach: function (context, settings) {
+                region = Drupal.settings.badcamp19.region;
+                id = Drupal.settings.badcamp19.id;
+            }
+        };
+    })(jQuery);
+
     // Configure the credentials provider to use your identity pool
-    AWS.config.region = 'us-east-1';
+    AWS.config.region = region;
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'us-east-1:dfc6890f-a4cf-4c68-9d23-d415dbdb2673',
+        IdentityPoolId: id,
     });
 
     // Make the call to obtain credentials

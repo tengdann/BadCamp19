@@ -4,3 +4,6 @@ package = Custom
 core = 7.x
 version = 7.x-0.1
 dependencies[] = drupal:image
+
+; NEW LINE
+configure = admin/config/media/badcamp19
