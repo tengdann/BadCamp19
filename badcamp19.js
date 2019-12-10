@@ -8,6 +8,21 @@
     });
 })(jQuery);
 
+// Needed for global variable declaration
+var region;
+var id;
+
+// Access Drupal variables set in config
+// Adapted from https://stackoverflow.com/questions/14234598/drupal-7-global-javascript-variables
+(function ($) {
+    Drupal.behaviors.badcamp19 = {
+        attach: function (context, settings) {
+            region = Drupal.settings.badcamp19.region;
+            id = Drupal.settings.badcamp19.id;
+        }
+    };
+})(jQuery);
+
 // Calls DetectLabels API and provides formatted descriptor of image
 function DetectLabels(imageData) {
     AWS.region = 'us-east-1';
@@ -102,18 +117,6 @@ function ProcessImage() {
 
 // Provides anonymous log on to AWS services
 function AnonLog() {
-
-    // Access Drupal variables set in config4
-    // Adapted from https://stackoverflow.com/questions/14234598/drupal-7-global-javascript-variables
-    (function ($) {
-        Drupal.behaviors.badcamp19 = {
-            attach: function (context, settings) {
-                region = Drupal.settings.badcamp19.region;
-                id = Drupal.settings.badcamp19.id;
-            }
-        };
-    })(jQuery);
-
     // Configure the credentials provider to use your identity pool
     AWS.config.region = region;
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
